@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import { CssBaseline } from '@material-ui/core'
+import moment from 'moment'
 
 const useStyles = makeStyles({
   table: {
@@ -29,6 +30,7 @@ const PastMadeReminder = ({ pastReminder }) => {
           <TableHead>
             <TableRow>
               <TableCell>Reminder Label</TableCell>
+              <TableCell align="right">Elapsed</TableCell>
               <TableCell align="right">Due Date and Time</TableCell>
             </TableRow>
           </TableHead>
@@ -37,6 +39,9 @@ const PastMadeReminder = ({ pastReminder }) => {
               <TableRow>
                 <TableCell align="center">{item.message}</TableCell>
                 <TableCell align="right">{item.displayText}</TableCell>
+                <TableCell align="right">
+                  {moment(item.dateTime).format('MMMM Do YYYY, h:mm:ss a')}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
