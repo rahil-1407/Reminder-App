@@ -4,15 +4,17 @@ import ReminderList from './ReminderList'
 import moment from 'moment'
 import { useState, useEffect } from 'react'
 import { AppBar, Grid, Typography } from '@material-ui/core'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionCreators } from '../actions/actionCreator'
 
 const ParentComponent = () => {
+  const dispatch = useDispatch()
+  const { pastReminder, futureReminder } = useSelector((state) => state.reducer)
+
   const [reminder, setReminder] = useState({
     message: '',
     dateTime: '',
   })
-
-  const [pastReminder, setPastReminder] = useState([])
-  const [futureReminder, setFutureReminder] = useState([])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -29,13 +31,13 @@ const ParentComponent = () => {
         message: reminder.message,
         dateTime: reminder.dateTime,
       })
-      setPastReminder(pastReminder)
+      dispatch(ActionCreators.updatePast(pastReminder))
     } else {
       futureReminder.push({
         message: reminder.message,
         dateTime: reminder.dateTime,
       })
-      setFutureReminder(futureReminder)
+      dispatch(ActionCreators.updateFuture(futureReminder))
     }
     setReminder({
       message: '',
@@ -49,10 +51,8 @@ const ParentComponent = () => {
         pastReminder.push(item)
       } else return { item }
     })
-    setFutureReminder(updatedFutureReminder)
-
-    const updatedPastReminder = pastReminder.map((item) => item)
-    setPastReminder(updatedPastReminder)
+    dispatch(ActionCreators.updateFuture(updatedFutureReminder))
+    dispatch(ActionCreators.updatePast(pastReminder))
   }
 
   useEffect(() => {
