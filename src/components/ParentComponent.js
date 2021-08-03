@@ -1,13 +1,11 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
-import { AppBar, Grid } from '@material-ui/core'
-import Typography from '@material-ui/core/Typography'
 import Form from './Form'
+import ReminderList from './ReminderList'
 import moment from 'moment'
-import PastMadeReminder from './PastMadeReminder'
-import FutureMadeReminder from './FutureMadeReminder'
+import { useState, useEffect } from 'react'
+import { AppBar, Grid, Typography } from '@material-ui/core'
 
-const MainComponent = () => {
+const ParentComponent = () => {
   const [reminder, setReminder] = useState({
     message: '',
     dateTime: '',
@@ -26,20 +24,15 @@ const MainComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    const dueDate = moment(new Date(reminder.dateTime)).fromNow()
-
-    if (dueDate.includes('ago')) {
+    if (new Date() >= moment(reminder.dateTime)) {
       pastReminder.push({
         message: reminder.message,
-        displayText: dueDate,
         dateTime: reminder.dateTime,
       })
       setPastReminder(pastReminder)
     } else {
       futureReminder.push({
         message: reminder.message,
-        displayText: dueDate,
         dateTime: reminder.dateTime,
       })
       setFutureReminder(futureReminder)
@@ -48,29 +41,22 @@ const MainComponent = () => {
       message: '',
       dateTime: '',
     })
-    console.log(reminder)
-    console.log(pastReminder)
-    console.log(futureReminder)
   }
 
-  const updateReminderTable = () => {
+  const updateReminderList = () => {
     const updatedFutureReminder = futureReminder.filter((item) => {
-      const dueDate = moment(new Date(item.dateTime)).fromNow()
-      if (dueDate.includes('ago')) {
+      if (new Date() >= moment(item.dateTime)) {
         pastReminder.push(item)
-      } else return { ...item, displayText: dueDate }
+      } else return { item }
     })
     setFutureReminder(updatedFutureReminder)
 
-    const updatedPastReminder = pastReminder.map((item) => {
-      const dueDate = moment(new Date(item.dateTime)).fromNow()
-      return { ...item, displayText: dueDate }
-    })
+    const updatedPastReminder = pastReminder.map((item) => item)
     setPastReminder(updatedPastReminder)
   }
 
   useEffect(() => {
-    const timerId = setInterval(updateReminderTable, 1000)
+    const timerId = setInterval(updateReminderList, 1000)
     return () => clearInterval(timerId)
   })
 
@@ -88,14 +74,14 @@ const MainComponent = () => {
       />
       <Grid container spacing={10} justify="center">
         <Grid item>
-          <PastMadeReminder pastReminder={pastReminder} />
+          <ReminderList type="Past" List={pastReminder} />
         </Grid>
         <Grid item>
-          <FutureMadeReminder futureReminder={futureReminder} />
+          <ReminderList type="Future" List={futureReminder} />
         </Grid>
       </Grid>
     </div>
   )
 }
 
-export default MainComponent
+export default ParentComponent

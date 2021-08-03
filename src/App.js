@@ -1,9 +1,9 @@
 import './App.css';
-import MainComponent from './components/MainComponent';
+import ParentComponent  from './components/ParentComponent';
 
 function App() {
   return (
-    <MainComponent />
+    <ParentComponent />
   );
 }
 
