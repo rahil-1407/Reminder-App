@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const Form = ({ reminder, handleChange, handleSubmit }) => {
+const Form = ({ reminder, handleChange, handleSubmit, clearAll }) => {
   const classes = useStyles()
   return (
     <form align="center" className={classes.form}>
@@ -31,7 +31,6 @@ const Form = ({ reminder, handleChange, handleSubmit }) => {
         value={reminder.dateTime}
         label="Select date and time"
         type="datetime-local"
-        defaultValue="2017-05-24T10:30"
         className={classes.textField}
         InputLabelProps={{
           shrink: true,
@@ -41,8 +40,11 @@ const Form = ({ reminder, handleChange, handleSubmit }) => {
       <br /> <br />
       <Button variant="contained" color="primary" onClick={handleSubmit}>
         Add Reminder
-      </Button>
+      </Button>{' '}
       <br /> <br />
+      <Button variant="contained" color="secondary" onClick={clearAll}>
+        Clear All
+      </Button>
     </form>
   )
 }

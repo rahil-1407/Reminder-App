@@ -7,7 +7,7 @@ import { AppBar, Grid, Typography } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { ActionCreators } from '../actions/actionCreator'
 
-const ParentComponent = () => {
+const MainComponent = () => {
   const dispatch = useDispatch()
   const { pastReminder, futureReminder } = useSelector((state) => state.reducer)
 
@@ -26,17 +26,15 @@ const ParentComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (reminder.message === '' || reminder.dateTime === '') {
+      alert('Please fill all the details!!')
+      return
+    }
     if (new Date() >= moment(reminder.dateTime)) {
-      pastReminder.push({
-        message: reminder.message,
-        dateTime: reminder.dateTime,
-      })
+      pastReminder.push(reminder)
       dispatch(ActionCreators.updatePast(pastReminder))
     } else {
-      futureReminder.push({
-        message: reminder.message,
-        dateTime: reminder.dateTime,
-      })
+      futureReminder.push(reminder)
       dispatch(ActionCreators.updateFuture(futureReminder))
     }
     setReminder({
@@ -46,11 +44,15 @@ const ParentComponent = () => {
   }
 
   const updateReminderList = () => {
-    const updatedFutureReminder = futureReminder.filter((item) => {
+    const updatedFutureReminder = []
+    for (let i = 0; i < futureReminder.length; i++) {
+      let item = futureReminder[i]
       if (new Date() >= moment(item.dateTime)) {
         pastReminder.push(item)
-      } else return { item }
-    })
+      } else {
+        updatedFutureReminder.push(item)
+      }
+    }
     dispatch(ActionCreators.updateFuture(updatedFutureReminder))
     dispatch(ActionCreators.updatePast(pastReminder))
   }
@@ -60,6 +62,11 @@ const ParentComponent = () => {
     return () => clearInterval(timerId)
   })
 
+  const clearAll = () => {
+    dispatch(ActionCreators.updatePast([]))
+    dispatch(ActionCreators.updateFuture([]))
+  }
+
   return (
     <div>
       <AppBar position="static">
@@ -68,20 +75,21 @@ const ParentComponent = () => {
         </Typography>
       </AppBar>
       <Form
+        clearAll={clearAll}
         reminder={reminder}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
-      <Grid container spacing={10} justify="center">
+      <Grid container spacing={10} justifyContent="center">
         <Grid item>
-          <ReminderList type="Past" List={pastReminder} />
+          <ReminderList type="Past" list={pastReminder} />
         </Grid>
         <Grid item>
-          <ReminderList type="Future" List={futureReminder} />
+          <ReminderList type="Future" list={futureReminder} />
         </Grid>
       </Grid>
     </div>
   )
 }
 
-export default ParentComponent
+export default MainComponent

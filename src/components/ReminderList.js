@@ -6,26 +6,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  makeStyles,
 } from '@material-ui/core'
 import moment from 'moment'
 
-const useStyles = makeStyles({
-  table: {
-    width: '100%',
-  },
-})
-
-const ReminderList = ({ type, List }) => {
-  const classes = useStyles()
+const ReminderList = ({ type, list }) => {
   return (
-    <TableContainer className={classes.table}>
-      <Table className={classes.table} aria-label="simple table">
+    <TableContainer>
+      <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>
-              {type === 'Past' ? 'Past Reminders' : 'Future Reminders'}
-            </TableCell>
+            <TableCell>{type} Reminders</TableCell>
           </TableRow>
         </TableHead>
         <TableHead>
@@ -38,8 +28,8 @@ const ReminderList = ({ type, List }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {List.map((item) => (
-            <TableRow>
+          {list.map((item,index) => (
+            <TableRow key={index}>
               <TableCell align="center">{item.message}</TableCell>
               <TableCell align="right">
                 {moment(new Date(item.dateTime)).fromNow()}
